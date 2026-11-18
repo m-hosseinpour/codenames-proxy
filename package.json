@@ -1,0 +1,18 @@
+{
+  "name": "codenames-rewrite",
+  "version": "1.0.0",
+  "description": "Serve codenames.game through your own domain by rewriting the game's websocket host in the page",
+  "license": "MIT",
+  "private": true,
+  "bin": {
+    "codenames-rewrite": "rewrite.js"
+  },
+  "scripts": {
+    "start": "node rewrite.js",
+    "install-service": "./install.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}

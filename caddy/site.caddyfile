@@ -1,0 +1,40 @@
+# Caddy site block for codenames-rewrite.
+#
+# Replace YOUR_DOMAIN with the host you published (DNS A/AAAA record pointing at this machine);
+# Caddy obtains the certificate for it automatically. Requires Caddy 2.11 or newer (`network_proxy`).
+#
+# Optional access gate. Uncomment and hash a password with:
+#   caddy hash-password --plaintext '<password>'
+#	basic_auth {
+#		user <bcrypt-hash>
+#	}
+
+YOUR_DOMAIN {
+	# The websocket of the game lives on a different host than the page; send it to the real server.
+	@socket path_regexp ^/(?:[0-9]+/)?socket\.io/
+	handle @socket {
+		reverse_proxy https://server-discord.gke.codenames.game {
+			transport http {
+				network_proxy url http://127.0.0.1:1080
+			}
+		}
+	}
+
+	# The page is served by codenames-rewrite, which injects the websocket shim.
+	@document {
+		method GET
+		header Accept *text/html*
+	}
+	handle @document {
+		reverse_proxy 127.0.0.1:8090
+	}
+
+	handle {
+		reverse_proxy https://codenames.game {
+			transport http {
+				network_proxy url http://127.0.0.1:1080
+			}
+			header_up Origin https://codenames.game
+		}
+	}
+}

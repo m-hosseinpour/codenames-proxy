@@ -1,0 +1,4 @@
+# runtime state, if someone points DISABLE_FLAG or the service logs here
+*.log
+node_modules/
+.env

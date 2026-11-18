@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Turns the proxy page on or off without touching systemd or Caddy:
+# while the flag file exists the service answers 503 for every page request.
+set -euo pipefail
+
+flag="${DISABLE_FLAG:-$HOME/.config/codenames-proxy/disabled}"
+
+case "${1:-status}" in
+	on | enable)
+		rm -f "$flag"
+		echo "enabled"
+		;;
+	off | disable)
+		mkdir -p "$(dirname "$flag")"
+		: >"$flag"
+		echo "disabled (pages answer 503)"
+		;;
+	status)
+		if [ -e "$flag" ]; then echo "disabled"; else echo "enabled"; fi
+		;;
+	*)
+		echo "usage: $0 on|off|status" >&2
+		exit 2
+		;;
+esac
