@@ -3,6 +3,13 @@
 # Replace YOUR_DOMAIN with the host you published (DNS A/AAAA record pointing at this machine);
 # Caddy obtains the certificate for it automatically. Requires Caddy 2.11 or newer (`network_proxy`).
 #
+# Both upstreams are reached through an HTTP proxy. It defaults to http://127.0.0.1:1080 and can be
+# changed without editing this file by setting UPSTREAM_PROXY_URL in Caddy's environment, e.g. a
+# drop-in at /etc/systemd/system/caddy.service.d/proxy.conf with
+#   [Service]
+#   Environment=UPSTREAM_PROXY_URL=http://10.0.0.5:3128
+# Keep it in step with the service unit's own UPSTREAM_PROXY_URL.
+#
 # Optional access gate. Uncomment and hash a password with:
 #   caddy hash-password --plaintext '<password>'
 #	basic_auth {
@@ -15,7 +22,7 @@ YOUR_DOMAIN {
 	handle @socket {
 		reverse_proxy https://server-discord.gke.codenames.game {
 			transport http {
-				network_proxy url http://127.0.0.1:1080
+				network_proxy url {$UPSTREAM_PROXY_URL:http://127.0.0.1:1080}
 			}
 		}
 	}
@@ -32,7 +39,7 @@ YOUR_DOMAIN {
 	handle {
 		reverse_proxy https://codenames.game {
 			transport http {
-				network_proxy url http://127.0.0.1:1080
+				network_proxy url {$UPSTREAM_PROXY_URL:http://127.0.0.1:1080}
 			}
 			header_up Origin https://codenames.game
 		}

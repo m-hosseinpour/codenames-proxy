@@ -34,8 +34,10 @@ Nothing else about the page is touched, and no asset is routed through this serv
 - **Caddy 2.11+** — the site block uses `network_proxy`; the older `proxy` subdirective does not exist.
 - **Node 18+** for the service.
 - An HTTP proxy that can reach both `codenames.game` and `server-discord.gke.codenames.game`. Both
-  hosts were unreachable directly from the test machine, so the proxy is not optional here. The
-  default is `http://127.0.0.1:1080`; point it at whatever your tunnel exposes.
+  hosts were unreachable directly from the test machine, so the proxy is not optional here. It
+  defaults to `http://127.0.0.1:1080` and is configurable on both sides through the same variable,
+  `UPSTREAM_PROXY_URL`: `--proxy` for the service installer, and Caddy's own environment for the
+  site block (see the header of `caddy/site.caddyfile`). Keep the two in step.
 
 ## Install
 
