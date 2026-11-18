@@ -221,11 +221,11 @@ const server = http.createServer(async (req, res) => {
 		await handleDocument(req, res);
 	} catch (error) {
 		console.error(`${new Date().toISOString()} ${req.method} ${req.url}: ${error.message}`);
-		send(res, 502, { 'content-type': 'text/plain; charset=utf-8' }, Buffer.from(`codenames-rewrite: ${error.message}\n`));
+		send(res, 502, { 'content-type': 'text/plain; charset=utf-8' }, Buffer.from(`codenames-proxy: ${error.message}\n`));
 	}
 });
 
 server.on('clientError', (_error, socket) => socket.destroy());
 server.listen(LISTEN.port, LISTEN.host, () => {
-	console.log(`codenames-rewrite listening on http://${LISTEN.host}:${LISTEN.port}, ${SOCKET_HOST} -> ${PUBLIC_HOST}`);
+	console.log(`codenames-proxy listening on http://${LISTEN.host}:${LISTEN.port}, ${SOCKET_HOST} -> ${PUBLIC_HOST}`);
 });

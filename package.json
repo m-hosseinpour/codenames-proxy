@@ -1,11 +1,11 @@
 {
-  "name": "codenames-rewrite",
+  "name": "codenames-proxy",
   "version": "1.0.0",
   "description": "Serve codenames.game through your own domain by rewriting the game's websocket host in the page",
   "license": "MIT",
   "private": true,
   "bin": {
-    "codenames-rewrite": "rewrite.js"
+    "codenames-proxy": "rewrite.js"
   },
   "scripts": {
     "start": "node rewrite.js",

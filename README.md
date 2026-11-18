@@ -1,4 +1,4 @@
-# codenames-rewrite
+# codenames-proxy
 
 Serves **codenames.game** through your own domain so it stays playable on a network where the game
 is blocked.
@@ -24,7 +24,7 @@ Nothing else about the page is touched, and no asset is routed through this serv
 
 | Request | Handled by |
 | --- | --- |
-| HTML documents | `codenames-rewrite`, then the origin |
+| HTML documents | `codenames-proxy`, then the origin |
 | `/<n>/socket.io/` websocket | Caddy, straight to the game server |
 | everything else (assets, RSC, POSTs) | Caddy, straight to the origin |
 
@@ -43,7 +43,7 @@ Nothing else about the page is touched, and no asset is routed through this serv
 ./install.sh --public-base https://game.example.com
 ```
 
-That writes `~/.config/systemd/user/codenames-rewrite.service` for this checkout and enables it on
+That writes `~/.config/systemd/user/codenames-proxy.service` for this checkout and enables it on
 the loopback port 8090. Add `--proxy http://127.0.0.1:1080` if your proxy differs, `--port` to move
 the local listener, `--after some.service` to order it behind whatever keeps your tunnel up, and
 `--uninstall` to remove it again. The user manager must survive logout
@@ -65,7 +65,7 @@ sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo sy
 ```
 
 It is a single flag file (`~/.config/codenames-proxy/disabled`, override with `DISABLE_FLAG`); no
-systemd or Caddy involvement. `systemctl --user disable --now codenames-rewrite` also works, but then
+systemd or Caddy involvement. `systemctl --user disable --now codenames-proxy` also works, but then
 the subdomain answers 502 instead of a readable page.
 
 ## Access control
@@ -94,7 +94,7 @@ curl -s -u user:pass -o /dev/null -w '%{http_code}\n' \
   'https://game.example.com/socket.io/?EIO=4&transport=polling'                          # 200
 ```
 
-`journalctl --user -u codenames-rewrite -f` shows upstream failures and the no-`<head>` warning.
+`journalctl --user -u codenames-proxy -f` shows upstream failures and the no-`<head>` warning.
 
 ## Security notes
 

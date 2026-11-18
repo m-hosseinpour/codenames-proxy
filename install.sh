@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs (or removes) the codenames-rewrite user service for this checkout.
+# Installs (or removes) the codenames-proxy user service for this checkout.
 #
 #   ./install.sh --public-base https://game.example.com
 #   ./install.sh --uninstall
@@ -39,13 +39,13 @@ while [ $# -gt 0 ]; do
 done
 
 unit_dir="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
-unit="$unit_dir/codenames-rewrite.service"
+unit="$unit_dir/codenames-proxy.service"
 
 if [ "$UNINSTALL" = 1 ]; then
-	systemctl --user disable --now codenames-rewrite.service 2>/dev/null || true
+	systemctl --user disable --now codenames-proxy.service 2>/dev/null || true
 	rm -f "$unit"
 	systemctl --user daemon-reload
-	echo "removed codenames-rewrite.service (the Caddy site block is left untouched)"
+	echo "removed codenames-proxy.service (the Caddy site block is left untouched)"
 	exit 0
 fi
 
@@ -60,7 +60,7 @@ mkdir -p "$unit_dir" "${XDG_CONFIG_HOME:-$HOME/.config}/codenames-proxy"
 
 cat >"$unit" <<EOF
 [Unit]
-Description=codenames-rewrite — serves codenames.game with the websocket host pointed at $PUBLIC_BASE
+Description=codenames-proxy — serves codenames.game with the websocket host pointed at $PUBLIC_BASE
 After=network.target$after_line
 
 [Service]
@@ -74,18 +74,18 @@ Restart=on-failure
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=codenames-rewrite
+SyslogIdentifier=codenames-proxy
 
 [Install]
 WantedBy=default.target
 EOF
 
 systemctl --user daemon-reload
-systemctl --user enable --now codenames-rewrite.service
+systemctl --user enable --now codenames-proxy.service
 sleep 2
-systemctl --user is-active codenames-rewrite.service >/dev/null || die "service failed to start: journalctl --user -u codenames-rewrite"
+systemctl --user is-active codenames-proxy.service >/dev/null || die "service failed to start: journalctl --user -u codenames-proxy"
 
-echo "service: $(systemctl --user is-active codenames-rewrite.service) (listening on 127.0.0.1:$PORT)"
+echo "service: $(systemctl --user is-active codenames-proxy.service) (listening on 127.0.0.1:$PORT)"
 if [ "$(loginctl show-user "$USER" -p Linger --value 2>/dev/null)" != "yes" ]; then
 	echo "warning: user lingering is off, so the service stops when your session ends:" >&2
 	echo "         sudo loginctl enable-linger $USER" >&2
